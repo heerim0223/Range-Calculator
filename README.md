@@ -1,32 +1,47 @@
 # 개요
 입력받은 두 MGRS 좌표간의 거리를 계산해주는 계산기입니다.
 
-# 
+# ㅇ
 ## 1. 편평도 고려
-### 지구가 완벽한 구 형태가 아니라는 점을 고려하여 최대한 오차 범위를 줄이고자 지구의 형태와 가장 유사한 세계 지구 좌표 시스템인 WGS-84 모델을 사용합니다.
-### 또한 동일 좌표계 내의 두 좌표의 거리를 계산하는 동시에 오차 범위를 줄이기 위해 Haversine Formula를 사용하는 대신 WGS-84 모델을 기준으로 Vincenty's Formula를 사용합니다.
+지구가 완벽한 구 형태가 아니라는 점을 고려하여 최대한 오차 범위를 줄이고자 지구의 형태와 가장 유사한 세계 지구 좌표 시스템인 WGS-84 모델을 사용합니다.
+
+또한 동일 좌표계 내의 두 좌표의 거리를 계산하는 동시에 오차 범위를 줄이기 위해 Haversine Formula를 사용하는 대신 WGS-84 모델을 기준으로 Vincenty's Formula를 사용합니다.
 
 ## 2. 위경도 계산
-### 입력받은 MGRS 좌표를 UTM 좌표계 내의 위경도로 치환합니다.
-### 1. MGRS -> UTM 변환
-### 2. UTM ->  경위도(WGS-84) 변환
-### 3. Vincenty Formula로 두 점의 지리적 거리 계산
+입력받은 MGRS 좌표를 UTM 좌표계 내의 위경도로 치환합니다.
+
+
+1. MGRS -> UTM 변환
+
+2. UTM ->  경위도(WGS-84) 변환
+
+3. Vincenty Formula로 두 점의 지리적 거리 계산
+
 
 ## 구현 제한 고려
-### 매크로, VBA, 인터넷 등이 사용불가한 공간 내에서 구현을 해야한다는 한계를 고려합니다.
+
+매크로, VBA, 인터넷 등이 사용불가한 공간 내에서 구현을 해야한다는 한계를 고려합니다.
 
 # 선행 개념
 ## MGRS
-### [Zone Number][Latitude Band][100,000m Grid Square][Easting/Northing]
-#### Zone Number(1~60)
+> [Zone Number][Latitude Band][100,000m Grid Square][Easting/Northing]
 
-#### Latitude Band
-#### 100,000m Grid Square
-#### Easting/Northing
+1. Zone Number(1~60)
+  ![Image](https://github.com/user-attachments/assets/f0a98788-e945-4706-9fda-aabb3580ba71)
+
+2. Latitude Band
+  ![Image](https://github.com/user-attachments/assets/a8bb38c3-2045-46dd-bcca-a92d530f0b9e)
+
+3. 100,000m Grid Square
+  ![Image](https://github.com/user-attachments/assets/f69f0b87-520e-4dc1-9ae5-3b4e3504a344)
+
+4. Easting/Northing
+
 
 #
 ## Vincenty Formula(Inverse Problem)
-### 1. 필요한 상수값(WGS-84 기준)
+
+1. 필요한 상수값(WGS-84 기준)
 ```
 두 지점의 위도/경도: (φ1, λ1, φ2, λ2)
 적도 반지름(meter): (a = 6378137)
