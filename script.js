@@ -166,3 +166,5 @@ const SecondPosition = mgrsToLatLon("52SCH100400"); // 두 번째 mgrs 좌표
 // 두 좌표간의 거리 출력
 const d = vincentyDistance(FirstPosition.latitude,FirstPosition.longitude,SecondPosition.latitude,SecondPosition.longitude);
 console.log(`두 좌표간의 거리: ${(d / 1000).toFixed(3)} km`);
+
+// 추가해야하는 요소: input, button, buttonEventListner, output
