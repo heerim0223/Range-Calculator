@@ -1,7 +1,8 @@
-# 개요
+# 💡 개요
 입력받은 두 MGRS 좌표간의 거리를 계산해주는 계산기입니다.
 
-## 구현시 중요한 사항
+
+## 📋 구현시 중요한 사항
 #### 1. 편평도 고려
 지구가 완벽한 구 형태가 아니라는 점을 고려하여 최대한 오차 범위를 줄이고자 지구의 형태와 가장 유사한 세계 지구 좌표 시스템인 WGS-84 모델을 사용합니다.
 
@@ -18,7 +19,7 @@
 > 3. Vincenty Formula로 두 점의 지리적 거리 계산
 
 
-## 선행 개념
+## 📝 선행 개념
 ### MGRS(Military_Grid_Reference_System)
 > [Zone Number][Latitude Band][100,000m Grid Square][Easting/Northing]
 >
@@ -48,7 +49,7 @@
   - 짝수로 표현(Easting, Northing이 각각 절반)
 
 
-# 계산에 필요한 공식
+# 📊 계산에 필요한 공식
 ### Vincenty Formula(Inverse Problem)
 
 #### 1. 필요한 상수값(WGS-84 기준)
@@ -95,7 +96,29 @@ B = u²/1024 * (256 + u²*(-128 + u²*(74 - 47*u²)))
 Distance = b*A*(σ - Δσ)
 ```
 
-# 도움을 준 사이트
+# ❓ MGRS는 군사기밀인가요?
+아니요, **MGRS(Military Grid Reference System)** 자체는 군사기밀이 아닙니다.
+
+MGRS는 **전 세계 공용 좌표계**인 UTM(Universal Transverse Mercator)과 UPS(Universal Polar Stereographic)를 기반으로 만들어진 군사용 그리드 시스템이에요.  
+즉, **좌표 표현 방식**일 뿐이며, NATO나 미군, 여러 국가에서 지도상 위치를 간단히 표현하기 위해 사용하고 있습니다.
+
+다만 **MGRS 좌표를 포함한 군 작전계획서, 실제 군사 위치 데이터**는 군사기밀이 될 수 있습니다.  
+즉, "MGRS 시스템" 자체는 공개된 기술이고 누구나 사용할 수 있지만, **MGRS로 표기된 특정 위치 데이터**가 군사정보에 포함된다면 기밀이 될 가능성이 높습니다.
+
+### ✅ MGRS가 공개된 이유
+- NATO STANAG 표준 문서로 등록되어 있음
+- GIS(지리정보시스템) 분야에서도 자유롭게 사용
+- 오픈소스 라이브러리로도 구현 가능
+
+위와 같은 이유로 해당 프로젝트는 실제 군에서 활용하는 정보를 일절 사용하지 않았습니다.
+
+### 요약:
+- 📌 **MGRS 시스템** = 공개
+- 📌 **MGRS 좌표에 담긴 군사정보** = 상황에 따라 군사기밀 가능
+
+
+
+# 🔍 도움을 준 사이트
 - Earth Point(https://www.earthpoint.us/Convert.aspx)
 - Wikipedia_MGRS(https://en.wikipedia.org/wiki/Military_Grid_Reference_System)
 - Wikipedia_Vincenty's formulae(https://en.wikipedia.org/wiki/Vincenty%27s_formulae)
