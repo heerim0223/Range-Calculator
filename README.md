@@ -29,23 +29,30 @@
 >
 > ex) 52SCH1234567890
 >
-> 52[Zone Number],
-> S[Latitude Band],
-> CH[100,000m Grid Square],
-> 1234567890[Easting/Northing]
+> **52**[Zone Number],
+> **S**[Latitude Band],
+> **CH**[100,000m Grid Square],
+> **1234567890[Easting/Northing]
 
 #### 1. Zone Number(1~60)
   지구를 경도 단위로 나는 UTM 존 번호입니다.
-  ![Image](https://github.com/user-attachments/assets/f0a98788-e945-4706-9fda-aabb3580ba71)
+
+
+  <img src="https://github.com/user-attachments/assets/f0a98788-e945-4706-9fda-aabb3580ba71" width="50%" />
 
 #### 2. Latitude Band
   위도를 8도씩 나눈 대문자 문자로, C(80°S ~ 72°S)부터 X(72°N ~ 84°N)까지.(단, I와 O는 사용하지 않음)
-  ![Image](https://github.com/user-attachments/assets/a8bb38c3-2045-46dd-bcca-a92d530f0b9e)
+  
+<img src="https://github.com/user-attachments/assets/a8bb38c3-2045-46dd-bcca-a92d530f0b9e" width="50%" />
+
 
 #### 3. 100,000m Grid Square
   두 개의 문자로, 각각(Easting)과 북쪽(Northig) 100km 사각형을 나타냅니다.
   ex) WN, AB
-  ![Image](https://github.com/user-attachments/assets/f69f0b87-520e-4dc1-9ae5-3b4e3504a344)
+
+
+<img src="https://github.com/user-attachments/assets/f69f0b87-520e-4dc1-9ae5-3b4e3504a344" width="50%" />
+
 
 #### 4. Easting/Northing
   위치의 세부 좌표로, 보통 짝수 자리수로 표현됩니다.
@@ -65,40 +72,70 @@
 ```
 
 #### 2. 경위도를 라디안으로 변환
-```
+$$
 φ1 = RADIANS(Lat1)
+$$
+$$
 φ2 = RADIANS(Lat2)
+$$
+$$
 L = RADIANS(λ2 - λ1)
-```
+$$
 
 #### 3. U1, U2 보조 위도 계산
-```
+$$
 U1 = ATAN((1 - f) * TAN(φ1))
+$$
+$$
 U2 = ATAN((1 - f) * TAN(φ2))
-```
+$$
 
 #### 4. 초기 λ = L로 설정하고, 아래 수식을 여러 번 반복(Iteration)
-```
-sinσ = SQRT((COS(U2)*SIN(λ))^2 + (COS(U1)*SIN(U2) - SIN(U1)*COS(U2)*COS(λ))^2)
-cosσ = SIN(U1)*SIN(U2) + COS(U1)*COS(U2)*COS(λ)
-σ = ATAN2(sinσ, cosσ)
-sinα = COS(U1)*COS(U2)*SIN(λ) / sinσ
-cos²α = 1 - sinα^2
-cos2σm = cosσ - (2*SIN(U1)*SIN(U2)/cos²α)
-C = f/16*cos²α*(4+f*(4-3*cos²α))
-λ_new = L + (1-C)*f*sinα*(σ + C*sinσ*(cos2σm + C*cosσ*(-1+2*cos2σm^2)))
-```
+$$
+\sin \sigma = \sqrt{(\cos(U_2) \sin(\lambda))^2 + (\cos(U_1) \sin(U_2) - \sin(U_1) \cos(U_2) \cos(\lambda))^2}
+$$
+$$
+\cos \sigma = \sin(U_1) \sin(U_2) + \cos(U_1) \cos(U_2) \cos(\lambda)
+$$
+$$
+\sigma = \text{atan2}(\sin \sigma, \cos \sigma)
+$$
+$$
+\sin \alpha = \frac{\cos(U_1) \cos(U_2) \sin(\lambda)}{\sin \sigma}
+$$
+$$
+\cos^2 \alpha = 1 - \sin^2 \alpha
+$$
+$$
+\cos(2\sigma_m) = \cos \sigma - \frac{2 \sin(U_1) \sin(U_2)}{\cos^2 \alpha}
+$$
+$$
+C = \frac{f}{16} \cos^2 \alpha \left(4 + f \left(4 - 3 \cos^2 \alpha\right)\right)
+$$
+$$
+\lambda_{\text{new}} = L + (1 - C) f \sin \alpha \left(\sigma + C \sin \sigma \left( \cos(2\sigma_m) + C \cos \sigma \left(-1 + 2 \cos^2( \sigma_m)\right)\right)\right)
+$$
+
 
 #### 5. 신규 λ가 이전 값과 거의 같아질 때까지 반복(보통 5~8회 정도)
 
 #### 6. 마지막 거리 계산
-```
-u² = cos²α * (a^2 - b^2) / b^2
-A = 1 + u²/16384*(4096 + u²*(-768 + u²*(320 - 175*u²)))
-B = u²/1024 * (256 + u²*(-128 + u²*(74 - 47*u²)))
-Δσ = B*sinσ*(cos2σm + B/4*(cosσ*(-1 + 2*cos2σm^2) - B/6*cos2σm*(-3 + 4*sinσ^2)*(-3 + 4*cos2σm^2)))
-Distance = b*A*(σ - Δσ)
-```
+$$
+u^2 = \frac{\cos^2 \alpha \cdot (a^2 - b^2)}{b^2}
+$$
+$$
+A = 1 + \frac{u^2}{16384} \left( 4096 + u^2 \left( -768 + u^2 \left( 320 - 175 u^2 \right) \right) \right)
+$$
+$$
+B = \frac{u^2}{1024} \left( 256 + u^2 \left( -128 + u^2 \left( 74 - 47 u^2 \right) \right) \right)
+$$
+$$
+\Delta \sigma = B \sin \sigma \left( \cos(2 \sigma_m) + \frac{B}{4} \left( \cos \sigma \left( -1 + 2 \cos^2 \sigma_m \right) - \frac{B}{6} \cos(2 \sigma_m) \left( -3 + 4 \sin^2 \sigma \right) \left( -3 + 4 \cos^2 \sigma_m \right) \right) \right)
+$$
+$$
+\text{Distance} = b A \left( \sigma - \Delta \sigma \right)
+$$
+
 
 # ❓ MGRS는 군사기밀인가요?
 아니요, **MGRS(Military Grid Reference System)** 자체는 군사기밀이 아닙니다.
