@@ -5,7 +5,23 @@ const f = 1 / 298.257223563;
 const k0 = 0.9996;
 const e = Math.sqrt(f * (2 - f));
 
+function isValidMGRS(mgrs) {
+    // MGRS 형식이 올바른지 확인
+    const regex = /^[0-9]{2}[A-Z]{1}[A-Z]{2}[0-9]{5,10}$/;
+    return regex.test(mgrs);
+}
+
+function isValidLatLon(latitude, longitude) {
+    // 위도는 -90도에서 90도, 경도는 -180도에서 180도 사이여야 합니다.
+    return latitude >= -90 && latitude <= 90 && longitude >= -180 && longitude <= 180;
+}
+
 function mgrsToLatLon(mgrs) {
+    // MGRS 형식 검증
+    if (!isValidMGRS(mgrs)) {
+        throw new Error("MGRS 좌표 형식이 잘못되었습니다.");
+    }
+
     // Step 1: 파싱 (예: "52S CH 45678 17890")
     const zoneNumber = parseInt(mgrs.substring(0, 2), 10);
     const latitudeBand = mgrs[2];
@@ -27,6 +43,12 @@ function mgrsToLatLon(mgrs) {
 
     // Step 3: UTM → 경위도 변환
     const { latitude, longitude } = utmToLatLon(zoneNumber, easting, northing, hemisphere);
+
+    // Step 4: 좌표의 유효성 확인
+    if (!isValidLatLon(latitude, longitude)) {
+        throw new Error("계산된 좌표가 유효하지 않습니다.");
+    }
+
     return { latitude, longitude };
 }
 
@@ -160,11 +182,19 @@ function vincentyDistance(lat1, lon1, lat2, lon2) {
     return s;
 }
 
-const FirstPosition = mgrsToLatLon("52SCH456178"); // 첫 번째 mgrs 좌표
-const SecondPosition = mgrsToLatLon("52SCH100400"); // 두 번째 mgrs 좌표
+// 두 좌표 입력
+const FirstPosition = prompt('첫 번째 mgrs 좌표를 입력해주세요','00AAA00000000').toUpperCase(); // 첫 번째 mgrs 좌표
+const SecondPosition = prompt('두 번째 mgrs 좌표를 입력해주세요','00AAA00000000').toUpperCase(); // 두 번째 mgrs 좌표
 
-// 두 좌표간의 거리 출력
-const d = vincentyDistance(FirstPosition.latitude,FirstPosition.longitude,SecondPosition.latitude,SecondPosition.longitude);
-console.log(`두 좌표간의 거리: ${(d / 1000).toFixed(3)} km`);
+try {
+    // mgrs -> 경위도
+    const FirstPosition_LatLon = mgrsToLatLon(FirstPosition); // 첫 번째 좌표(mgrs -> 경위도)
+    const SecondPosition_LatLon = mgrsToLatLon(SecondPosition); // 두 번째 좌표(mgrs -> 경위도)
 
-// 추가해야하는 요소: input, button, buttonEventListner, output
+    // 두 좌표간의 거리 출력
+    const d = vincentyDistance(FirstPosition_LatLon.latitude, FirstPosition_LatLon.longitude, SecondPosition_LatLon.latitude, SecondPosition_LatLon.longitude);
+    console.log(`두 좌표간의 거리: ${(d / 1000).toFixed(3)} km`);
+    alert(`두 좌표간의 거리: ${(d / 1000).toFixed(3)} km`);
+} catch (error) {
+    alert(error.message); // 오류 메시지 표시
+}
