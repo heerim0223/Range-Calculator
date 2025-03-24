@@ -1,0 +1,53 @@
+body {
+    font-family: Arial, sans-serif;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+    background-color: #fff;
+    background-image:
+    linear-gradient(90deg, transparent 79px, #abced4 79px, #abced4 81px, transparent 81px),
+    linear-gradient(#eee .1em, transparent .1em);
+    background-size: 100% 1.2em;
+}
+
+.container {
+    background: #fff;
+    padding: 20px 0px 20px 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    max-width: 500px;
+    width: 100%;
+    box-sizing: border-box;
+    margin: 30px auto;
+    box-shadow: 5px 5px 5px gray;
+}
+
+h3 {
+    text-align: center;
+    font-size: 30px;
+}
+
+.input {
+    padding: 0px;
+    margin: 0px auto;
+}
+
+input[type="text"], select {
+    width: calc(100% - 22px);
+    padding: 10px;
+    margin: 5px 0;
+    box-sizing: border-box;
+}
+
+button {
+    padding: 10px 20px;
+    margin: 10px 0;
+    cursor: pointer;
+    width: calc(100% - 22px);
+    box-sizing: border-box;
+}
+
+.main-button{
+    font-weight: bold;
+}

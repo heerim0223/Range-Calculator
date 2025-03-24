@@ -182,19 +182,27 @@ function vincentyDistance(lat1, lon1, lat2, lon2) {
     return s;
 }
 
-// 두 좌표 입력
-const FirstPosition = prompt('첫 번째 mgrs 좌표를 입력해주세요','00AAA00000000').toUpperCase(); // 첫 번째 mgrs 좌표
-const SecondPosition = prompt('두 번째 mgrs 좌표를 입력해주세요','00AAA00000000').toUpperCase(); // 두 번째 mgrs 좌표
+document.addEventListener('DOMContentLoaded', () => {
+    const btn = document.getElementById('btn');
+    btn.addEventListener('click', () => {
+        const FirstPosition = document.getElementById('from').value.toUpperCase(); // 첫 번째 mgrs 좌표
+        const SecondPosition = document.getElementById('to').value.toUpperCase(); // 두 번째 mgrs 좌표
+        
+        try {
+            // mgrs -> 경위도
+            const FirstPosition_LatLon = mgrsToLatLon(FirstPosition);
+            const SecondPosition_LatLon = mgrsToLatLon(SecondPosition);
 
-try {
-    // mgrs -> 경위도
-    const FirstPosition_LatLon = mgrsToLatLon(FirstPosition); // 첫 번째 좌표(mgrs -> 경위도)
-    const SecondPosition_LatLon = mgrsToLatLon(SecondPosition); // 두 번째 좌표(mgrs -> 경위도)
+            // 두 좌표간의 거리 계산
+            const d = vincentyDistance(
+                FirstPosition_LatLon.latitude, FirstPosition_LatLon.longitude,
+                SecondPosition_LatLon.latitude, SecondPosition_LatLon.longitude
+            );
 
-    // 두 좌표간의 거리 출력
-    const d = vincentyDistance(FirstPosition_LatLon.latitude, FirstPosition_LatLon.longitude, SecondPosition_LatLon.latitude, SecondPosition_LatLon.longitude);
-    console.log(`두 좌표간의 거리: ${(d / 1000).toFixed(3)} km`);
-    alert(`두 좌표간의 거리: ${(d / 1000).toFixed(3)} km`);
-} catch (error) {
-    alert(error.message); // 오류 메시지 표시
-}
+            document.getElementById('result').innerText = `두 좌표간의 거리: ${(d / 1000).toFixed(3)} km`; // 결과를 화면에 표시
+            console.log(`두 좌표간의 거리: ${(d / 1000).toFixed(3)} km`);
+        } catch (error) {
+            alert(error.message);  // 오류 메시지 표시
+        }
+    });
+});
