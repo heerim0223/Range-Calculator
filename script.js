@@ -1,4 +1,3 @@
-// mgrs -> utm -> wgs84
 // WGS84 타원체 상수
 const a = 6378137;
 const f = 1 / 298.257223563;
@@ -6,23 +5,19 @@ const k0 = 0.9996;
 const e = Math.sqrt(f * (2 - f));
 
 function isValidMGRS(mgrs) {
-    // MGRS 형식이 올바른지 확인
     const regex = /^[0-9]{2}[A-Z]{1}[A-Z]{2}[0-9]{5,10}$/;
     return regex.test(mgrs);
 }
 
 function isValidLatLon(latitude, longitude) {
-    // 위도는 -90도에서 90도, 경도는 -180도에서 180도 사이여야 합니다.
     return latitude >= -90 && latitude <= 90 && longitude >= -180 && longitude <= 180;
 }
 
 function mgrsToLatLon(mgrs) {
-    // MGRS 형식 검증
     if (!isValidMGRS(mgrs)) {
         throw new Error("MGRS 좌표 형식이 잘못되었습니다.");
     }
 
-    // Step 1: 파싱 (예: "52S CH 45678 17890")
     const zoneNumber = parseInt(mgrs.substring(0, 2), 10);
     const latitudeBand = mgrs[2];
     const gridSquare = mgrs.substring(3, 5);
@@ -35,16 +30,13 @@ function mgrsToLatLon(mgrs) {
     const easting = easting100k + parseInt(remainder.substring(0, precision).padEnd(5, '0'), 10);
     let northing = northing100k + parseInt(remainder.substring(precision).padEnd(5, '0'), 10);
 
-    // Step 2: 남반구 처리
     const hemisphere = (latitudeBand >= 'N') ? 'N' : 'S';
     if (hemisphere === 'S' && northing < 10000000) {
         northing += 10000000;
     }
 
-    // Step 3: UTM → 경위도 변환
     const { latitude, longitude } = utmToLatLon(zoneNumber, easting, northing, hemisphere);
 
-    // Step 4: 좌표의 유효성 확인
     if (!isValidLatLon(latitude, longitude)) {
         throw new Error("계산된 좌표가 유효하지 않습니다.");
     }
@@ -52,19 +44,16 @@ function mgrsToLatLon(mgrs) {
     return { latitude, longitude };
 }
 
-// 100k Grid easting 계산
 function getEasting100k(columnLetter, zoneNumber) {
-    const columnLetters = 'ABCDEFGHJKLMNPQRSTUVWXYZ';
     const colSet = ((zoneNumber - 1) % 3);
     const colBase = ['ABCDEFGH', 'JKLMNPQR', 'STUVWXYZ'][colSet];
     const idx = colBase.indexOf(columnLetter);
     return (idx + 1) * 100000;
 }
 
-// 100k Grid northing 계산
 function getNorthing100k(rowLetter, zoneNumber) {
     const rowLetters = 'ABCDEFGHJKLMNPQRSTUV';
-    let idx = rowLetters.indexOf(rowLetter);
+    const idx = rowLetters.indexOf(rowLetter);
     let northing = idx * 100000;
     const latBand = getLatBand(zoneNumber);
     while (northing < latBand) {
@@ -73,22 +62,11 @@ function getNorthing100k(rowLetter, zoneNumber) {
     return northing;
 }
 
-// 위도 밴드로부터 최소 northing 값 계산
-function getLatBand(zoneNumber) {
-    const latBands = "CDEFGHJKLMNPQRSTUVWX";
-    const bandMins = [
-        -80, -72, -64, -56, -48, -40, -32, -24, -16, -8,
-        0, 8, 16, 24, 32, 40, 48, 56, 64, 72
-    ];
-    return (bandMins[zoneNumber - 1] || 0) * 100000;
-}
-
 // UTM → 경위도 변환
 function utmToLatLon(zone, easting, northing, hemisphere) {
     const e1sq = e * e / (1 - e * e);
     const x = easting - 500000;
     const y = northing;
-    const n = a / Math.sqrt(1 - Math.pow(e * Math.sin(0), 2));
 
     const lonOrigin = (zone - 1) * 6 - 180 + 3;
 
@@ -96,7 +74,7 @@ function utmToLatLon(zone, easting, northing, hemisphere) {
     const mu = M / (a * (1 - Math.pow(e, 2) / 4 - 3 * Math.pow(e, 4) / 64 - 5 * Math.pow(e, 6) / 256));
 
     let phi1Rad = mu;
-    for (let i = 0; i < 5; i++) { // 수렴 반복
+    for (let i = 0; i < 5; i++) {
         const e1 = (1 - Math.sqrt(1 - e * e)) / (1 + Math.sqrt(1 - e * e));
         const phi1RadNew = mu
             + (3 * e1 / 2 - 27 * Math.pow(e1, 3) / 32) * Math.sin(2 * mu)
@@ -121,6 +99,13 @@ function utmToLatLon(zone, easting, northing, hemisphere) {
         longitude: lon
     };
 }
+
+// Latitude Band을 계산하는 함수
+function getLatBand(zoneNumber) {
+    const latBands = "CDEFGHJKLMNPQRSTUVWX";  // UTM Latitude Bands
+    return latBands.charAt(zoneNumber % latBands.length);
+}
+
 
 // 두 mgrs 좌표간의 거리 계산
 function vincentyDistance(lat1, lon1, lat2, lon2) {
