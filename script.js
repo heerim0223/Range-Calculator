@@ -30,12 +30,12 @@ function mgrsToLatLon(mgrs) {
     const easting = easting100k + parseInt(remainder.substring(0, precision).padEnd(5, '0'), 10);
     let northing = northing100k + parseInt(remainder.substring(precision).padEnd(5, '0'), 10);
 
-    const hemisphere = (latitudeBand >= 'N') ? 'N' : 'S';
-    if (hemisphere === 'S' && northing < 10000000) {
+    const _hemisphere = (latitudeBand >= 'N') ? 'N' : 'S';
+    if (_hemisphere === 'S' && northing < 10000000) {
         northing += 10000000;
     }
 
-    const { latitude, longitude } = utmToLatLon(zoneNumber, easting, northing, hemisphere);
+    const { latitude, longitude } = utmToLatLon(zoneNumber, easting, northing, _hemisphere);
 
     if (!isValidLatLon(latitude, longitude)) {
         throw new Error("계산된 좌표가 유효하지 않습니다.");
@@ -63,7 +63,7 @@ function getNorthing100k(rowLetter, zoneNumber) {
 }
 
 // UTM → 경위도 변환
-function utmToLatLon(zone, easting, northing, hemisphere) {
+function utmToLatLon(zone, easting, northing, _hemisphere) {
     const e1sq = e * e / (1 - e * e);
     const x = easting - 500000;
     const y = northing;
