@@ -2,6 +2,9 @@
 입력받은 두 MGRS 좌표간의 거리를 계산해주는 계산기입니다.
 
 
+**🚩 [Range-Calculator](https://heerim0223.github.io/Range-Calculator/)**
+
+
 ## 📋 구현시 중요한 사항
 #### 1. 편평도 고려
 ![Image](https://github.com/user-attachments/assets/f67e5173-e648-4eeb-b0a9-16f837f3efba)
@@ -157,9 +160,6 @@ MGRS는 **전 세계 공용 좌표계**인 UTM(Universal Transverse Mercator)과
 - 📌 **MGRS 시스템** = 공개
 - 📌 **MGRS 좌표에 담긴 군사정보** = 상황에 따라 군사기밀 가능
 
-
-# 🚩 Range-Calculator 사이트
-### **> [Range-Calculator](https://heerim0223.github.io/Range-Calculator/)**
 
 # 🔍 도움을 준 사이트
 - Earth Point(https://www.earthpoint.us/Convert.aspx)
